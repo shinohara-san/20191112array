@@ -1,0 +1,77 @@
+body{
+  height:100vh;
+  text-align: center;
+  background:rgb(245, 111, 111);
+  /* background-position: center;
+  background-size: cover;
+  object-fit: fill; */
+}
+
+#container{
+  background: white;
+  height:470px;
+  width:300px;
+  margin:20px auto;
+  border-radius: 40px;
+}
+
+
+h1{
+  padding-top:30px;
+  /* padding-bottom:0; */
+}
+
+.btn{
+  padding:20px;
+  width:50px;
+  margin:0 auto;
+  background:red;
+  border-radius: 10px;
+  box-shadow: 0px 10px rgb(168, 2, 2);
+  color:white;
+  user-select: none;
+  cursor: pointer;
+}
+
+.btn:hover{
+  opacity:.8;
+}
+
+.btn:active{
+  position: relative;
+  top:5px;
+  box-shadow: 0px 5px rgb(168, 2, 2);
+}
+
+.disabled{
+  background:gray;
+  box-shadow: 0px 10px rgb(70, 69, 69);
+}
+
+.disabled:active{
+  box-shadow: 0px 5px rgb(70, 69, 69);
+}
+
+.fas{
+  font-size:30px;
+}
+
+.facechange{
+  font-size:30px;
+  padding: 13px 20px;
+  color:white;
+  background:red;
+  box-shadow: 0px 10px rgb(168, 2, 2);
+}
+
+.facechange:active{
+  box-shadow: 0px 5px rgb(168, 2, 2);
+}
+
+.events_none{
+  pointer-events: none;
+}
+
+#replay{
+  padding-top:18px;
+}

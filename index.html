@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <title>英語発音チェック</title>
+</head>
+<body>
+  <div id="container">
+    <h1>英語発音チェック</h1>
+    <p id="count">&lt AIが厳しくジャッジ &gt<p>
+    <div class="btn" id="start"><i class="fas fa-microphone"></i></div>
+    <p id="question">&lt 1.読んでみましょう &gt</p>
+    <p id="text">&lt 2.あなたの発音はこう聞こえる &gt</p>
+    <p id="comment">&lt 3. 判定 &gt</p>
+    <div class="btn disabled" id="next"><i class="fas fa-arrow-right"></i></div>
+  <div id="replay"></div>
+  </div>
+  <!-- <img id ="medal_img" src =''> -->
+
+  <audio id="correct" preload="auto">
+    <source src="audio/correct2.mp3" type="audio/mp3">
+  </audio>
+  <audio id="incorrect" preload="auto">
+    <source src="audio/incorrect1.mp3" type="audio/mp3">
+  </audio>
+  <audio id="drum"" preload="auto">
+    <source src="audio/drum-roll1.mp3" type="audio/mp3">
+  </audio>
+  <audio id="low"" preload="auto">
+    <source src="audio/tin1.mp3" type="audio/mp3">
+  </audio>
+  <audio id="soso" preload="auto">
+    <source src="audio/boyoyon1.mp3" type="audio/mp3">
+  </audio>
+  <audio id="good" preload="auto">
+    <source src="audio/shakin1.mp3" type="audio/mp3">
+  </audio>
+  <audio id="native" preload="auto">
+    <source src="audio/trumpet1.mp3" type="audio/mp3">
+  </audio>
+  <audio id="qsound" preload="auto">
+    <source src="audio/question1.mp3" type="audio/mp3">
+  </audio>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script>
+$(function () {
+let count = 0;
+let point = 0;
+let wronganswer = 0;
+let isAnswered = false;
+const question = [
+  'elizabeth',
+  'plan',
+  'athlete',
+  'girl',
+  'world',
+  'clothes',
+];
+const correct = document.getElementById('correct');
+const incorrect = document.getElementById('incorrect');
+const low = document.getElementById('low');
+const soso = document.getElementById('soso');
+const good = document.getElementById('good');
+const native = document.getElementById('native');
+const qsound = document.getElementById('qsound');
+
+const container = document.getElementById('container');
+
+
+SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
+
+const recognition = new SpeechRecognition();
+recognition.lang = 'en-US';
+
+function commonAction (){
+  $('#count').text(`第${count + 1}問`);
+  $('#question').text('______');
+  $('#text').text('______').css('color', 'black');
+  $('#comment').text('______');
+  recognition.start();
+  setTimeout(() => {
+    $('#question').text(question[count]);
+    qsound.play();
+  }, 2000);
+};
+
+function changeColor(){
+  let i = Math.floor(Math.random() * 256);
+  let j = Math.floor(Math.random() * 256);
+  let k = Math.floor(Math.random() * 256);
+  $('body').css('background', `rgb(${i},${j},${k})`);
+  // $('#container').css('position', 'relative').css('top', i).css('left', j);
+  $('#container').css({
+      position:'relative',
+      top: i,
+      left: j
+  });
+
+
+  i = Math.floor(Math.random() * 256);
+  j = Math.floor(Math.random() * 256);
+  k = Math.floor(Math.random() * 256);
+};
+
+$('#start').on('click', function () {
+   if (isAnswered) {
+    return;
+  }else{
+  changeColor();
+  commonAction();
+  recognition.onresult = (e) => {
+    if (e.results[0][0].transcript.toLowerCase() == question[count]) {
+      $('#text').text('○ ' + e.results[0][0].transcript).css('color','red');
+      $('#start').addClass('disabled');
+      $('#next').removeClass('disabled');
+      correct.play();
+      point++;
+      if (point < 4) {
+        $('#comment').text('Good job');
+      } else if (point == 4) {
+        $('#comment').text('Great!');
+      } else if (point == 5) {
+        $('#comment').text('Wonderful!');
+      } else {
+        $('#comment').text('You are the best!!');
+      };
+    } else {
+      $('#text').text('× '  + e.results[0][0].transcript).css('color', 'blue');
+      $('#start').addClass('disabled');
+      $('#next').removeClass('disabled');
+      wronganswer++;
+      if(wronganswer < 4){
+      $('#comment').text('Oops...');
+      } else if(wronganswer == 4){
+        $('#comment').text('Oh...');
+      }else if(wronganswer == 5){
+        $('#comment').text('My...');
+      }else{
+        $('#comment').text('God!!!!!!!');
+      };
+      incorrect.play();
+    };
+    count++;
+    isAnswered = true;
+  }
+  };
+    
+  });
+  $('#next').on('click', function() {
+    if(!isAnswered){
+      return;
+    };
+    changeColor();
+    $('#start').removeClass('disabled');
+    $('#next').addClass('disabled');
+    isAnswered = false;
+    if(count < question.length){
+        commonAction();
+        
+    }else{
+        $('#count').text('結果発表');
+        $('#question').text('お疲れ様でした!');
+        $('#text').text('あなたの得点は...').css('color','black');
+        $('#comment').text('______');
+        drum.play();
+        $('#start').addClass('events_none');
+        setTimeout(() => {
+          if(point == 6){
+             $('#comment').text(`6点満点！！言うことナッシング！！`);
+             native.play();
+             $('#start').addClass('disabled');
+             $('#next').html('<a href="" style="color:white"><i class="far fa-grin-hearts"></i></a>').addClass('facechange');
+             $('#replay').text('Click the face to play again');
+            // $('#medal_img').html('<img src = >')
+
+          }else if(point >= 4){
+             $('#comment').text(`${point}点！海外ドラマをガンガン楽しもう！`);
+             good.play();
+             $('#start').addClass('disabled');  
+             $('#next').html('<a href="" style="color:white"><i class="far fa-laugh-squint"></i></a>').addClass('facechange');
+             $('#replay').text('Click the face to play again');
+           
+          }else if(point >= 2){
+             $('#comment').text(`${point}点。音読に取り組もう！`);
+             soso.play();
+             $('#start').addClass('disabled');
+               $('#next').html('<a href="" style="color:white"><i class="far fa-smile"></i></a>').addClass('facechange');
+               $('#replay').text('Click the face to play again');
+          }else{
+             $('#comment').text(`${point}点。まずは英語学習の習慣化！`);
+             low.play();
+             $('#start').addClass('disabled');
+              $('#next').html('<a href="" style="color:white"><i class="far fa-sad-tear"></i></a>').addClass('facechange');
+              $('#replay').text('Click the face to play again');
+                }
+              }, 5000);
+    };
+  });
+  // const body = document.body;
+
+  
+
+  $('#container').draggable({
+    containment: '.draggable-area',
+    cursor:'grabbing',
+    
+  });
+  container.addEventListener('click', ()=>{
+    // console.log(i, j ,k);
+    
+    
+  });
+  // container.addEventListener('cl', ()=>{
+  //    console.log(i, j, k);
+  //   $('body').css('background',`rgb(${i},${j},${k})`);
+  // }, false);
+  // container.addEventListener('dragend', ()=>{
+  //    console.log(i, j, k);
+  //   $('body').css('background',`rgb(${i},${j},${k})`);
+  // }, false);
+
+});
+</script>
+</body>
+</html>
